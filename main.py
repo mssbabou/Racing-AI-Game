@@ -1,53 +1,65 @@
-import math
 import pygame as pg
 
-pg.init()
+import Car
+import Map
 
-screen = pg.display.set_mode((600, 600))
-pg.display.set_caption("Racing AI")
-clock = pg.time.Clock()
+def main():
+    pg.init()
 
-CAR_MAX_SPEED = 5
-CAR_STEER_SPEED = 4
+    screen = pg.display.set_mode((600, 600))
+    pg.display.set_caption("Racing AI")
+    clock = pg.time.Clock()
 
-carImageAsset = pg.image.load("Lambo.png")
-carImageAssetWidth, carImageAssetHeight = carImageAsset.get_size()
-carImageAssetAspectRatio = carImageAssetHeight / carImageAssetWidth
-carImageAsset = pg.transform.scale(carImageAsset, (30, 30 * carImageAssetAspectRatio))
-carImageRect = carImageAsset.get_rect(center=(300, 300))
-carPosition = pg.Vector2(300, 300)
-carAngle = 0
+    # Create player car
+    playerCar = Car.Car("Lambo.png", maxSpeed=5, accel=3, steerSpeed=4)
+    playerCar.setImageAssetWidth(25)
 
-running = True
-while running:
-    arrowKeyInput = pg.Vector2()
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            running = False
+    map = Map.Map()
+    map.load("simpleTrackMap.json")
 
-    keys = pg.key.get_pressed()
-    if keys[pg.K_UP]:
-        arrowKeyInput.y -= 1
-    if keys[pg.K_DOWN]:
-        arrowKeyInput.y += 1
-    if keys[pg.K_LEFT]:
-        arrowKeyInput.x -= 1
-    if keys[pg.K_RIGHT]:
-        arrowKeyInput.x += 1
+    running = True
+    while running:
+        arrowKeyInput = pg.Vector2()
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                running = False
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    mousePos = pg.mouse.get_pos()
+                    map.trackPoints.append(pg.Vector2(mousePos[0], mousePos[1]))
 
-    carAngle -= arrowKeyInput.x * CAR_STEER_SPEED 
-    carPointing = pg.Vector2(math.sin(math.radians(carAngle)), math.cos(math.radians(carAngle)))
-    carPosition += carPointing * arrowKeyInput.y * CAR_MAX_SPEED
+        # Handle input
+        keys = pg.key.get_pressed()
+        if keys[pg.K_UP]:
+            arrowKeyInput.y -= 1
+        if keys[pg.K_DOWN]:
+            arrowKeyInput.y += 1
+        if keys[pg.K_LEFT]:
+            arrowKeyInput.x -= 1
+        if keys[pg.K_RIGHT]:
+            arrowKeyInput.x += 1
 
-    transformedCarImageAsset = pg.transform.rotate(carImageAsset, carAngle)
-    transformedCarImageRect = transformedCarImageAsset.get_rect(center=carPosition)
+        # Update car
+        playerCar.steer(arrowKeyInput.x)
+        playerCar.drive(arrowKeyInput.y)
 
-    screen.fill("white")
+        print(playerCar.position)
 
-    screen.blit(transformedCarImageAsset, transformedCarImageRect.topleft)
+        # Draw everything
+        screen.fill("white")
+        screen.blit(playerCar.transformedImageAsset, playerCar.transformedImageRect.topleft)
 
-    pg.display.flip()
+        lastPoint = 0
+        for point in map.trackPoints:
+            if (lastPoint != 0):
+                pg.draw.line(screen, "black", lastPoint, point)
+            pg.draw.circle(screen, "blue", point, 8)
+            lastPoint = point
+        pg.draw.line(screen, "black", map.trackPoints[0], map.trackPoints[-1])
 
-    clock.tick(60)  # limits FPS to 60
+        # Refresh display
+        pg.display.flip()
+        clock.tick(60)  # Limit
 
-pg.quit()
+if __name__ == "__main__":
+    main()
