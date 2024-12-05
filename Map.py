@@ -1,4 +1,5 @@
 import json
+import pygame as pg
 
 import Utils
 
@@ -41,3 +42,46 @@ class Map:
         
         # Update the track points
         self.trackPoints = newTrackPoints
+
+    def generateWalls(self, trackWidth):
+        self.leftWallPoints = []
+        self.rightWallPoints = []
+        num_points = len(self.trackPoints)
+
+        for i in range(num_points):
+            currentPoint = self.trackPoints[i]
+
+            # Get previous and next points with wrapping
+            prevPoint = self.trackPoints[i - 1]
+            nextPoint = self.trackPoints[(i + 1) % num_points]
+
+            # Compute the tangent vectors of the segments before and after the current point
+            tangent1 = (currentPoint - prevPoint)
+            tangent2 = (nextPoint - currentPoint)
+
+            if tangent1.length() == 0 or tangent2.length() == 0:
+                # Skip if any segment length is zero
+                continue
+
+            tangent1 = tangent1.normalize()
+            tangent2 = tangent2.normalize()
+
+            # Compute normals of the segments
+            normal1 = pg.Vector2(-tangent1.y, tangent1.x)
+            normal2 = pg.Vector2(-tangent2.y, tangent2.x)
+
+            # Compute the bisector normal
+            bisector = (normal1 + normal2)
+
+            if bisector.length() == 0:
+                # If normals are opposite, use one of them
+                bisector = normal1
+            else:
+                bisector = bisector.normalize()
+
+            # Compute left and right wall points
+            leftPoint = currentPoint + bisector * (trackWidth / 2)
+            rightPoint = currentPoint - bisector * (trackWidth / 2)
+
+            self.leftWallPoints.append(leftPoint)
+            self.rightWallPoints.append(rightPoint)

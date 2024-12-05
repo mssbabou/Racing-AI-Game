@@ -16,6 +16,7 @@ def main():
 
     map = Map.Map()
     map.load("simpleTrackMap.json")
+    map.generateWalls(40)
 
     running = True
     while running:
@@ -26,7 +27,7 @@ def main():
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mousePos = pg.mouse.get_pos()
-                    map.trackPoints.append(pg.Vector2(mousePos[0], mousePos[1]))
+                    #map.trackPoints.append(pg.Vector2(mousePos[0], mousePos[1]))
 
         # Handle input
         keys = pg.key.get_pressed()
@@ -49,17 +50,25 @@ def main():
         screen.fill("white")
         screen.blit(playerCar.transformedImageAsset, playerCar.transformedImageRect.topleft)
 
-        lastPoint = 0
-        for point in map.trackPoints:
-            if (lastPoint != 0):
-                pg.draw.line(screen, "black", lastPoint, point)
-            pg.draw.circle(screen, "blue", point, 8)
-            lastPoint = point
-        pg.draw.line(screen, "black", map.trackPoints[0], map.trackPoints[-1])
+        #drawTrack(screen, map.trackPoints)
+        drawTrack(screen, map.leftWallPoints)
+        drawTrack(screen, map.rightWallPoints)
 
         # Refresh display
         pg.display.flip()
         clock.tick(60)  # Limit
+    
+    map.simplifyTrack(10)
+    map.save("simpleTrackMap.json")
+    
+def drawTrack(screen, trackPoints):
+    lastPoint = 0
+    for point in trackPoints:
+        if (lastPoint != 0):
+            pg.draw.line(screen, "black", lastPoint, point)
+        #pg.draw.circle(screen, "blue", point, 8)
+        lastPoint = point
+    pg.draw.line(screen, "black", trackPoints[0], trackPoints[-1])
 
 if __name__ == "__main__":
     main()
