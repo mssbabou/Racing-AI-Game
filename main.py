@@ -2,6 +2,7 @@ import pygame as pg
 
 import Car
 import Map
+import Ray
 
 def main():
     pg.init()
@@ -16,7 +17,8 @@ def main():
 
     map = Map.Map()
     map.load("simpleTrackMap.json")
-    map.generateWalls(40)
+    map.generateWalls(80)
+    map.generateCollisionLines()
 
     running = True
     while running:
@@ -28,6 +30,7 @@ def main():
                 if event.button == 1:
                     mousePos = pg.mouse.get_pos()
                     #map.trackPoints.append(pg.Vector2(mousePos[0], mousePos[1]))
+                    #ap.generateWalls(80)
 
         # Handle input
         keys = pg.key.get_pressed()
@@ -50,18 +53,25 @@ def main():
         screen.fill("white")
         screen.blit(playerCar.transformedImageAsset, playerCar.transformedImageRect.topleft)
 
-        #drawTrack(screen, map.trackPoints)
+        drawTrack(screen, map.trackPoints)
         drawTrack(screen, map.leftWallPoints)
         drawTrack(screen, map.rightWallPoints)
+
+        ray = Ray.Ray(playerCar.position, playerCar.direction, 200)
+        ray.cast(map.collisionLines)
+        ray.draw(screen)
 
         # Refresh display
         pg.display.flip()
         clock.tick(60)  # Limit
     
-    map.simplifyTrack(10)
-    map.save("simpleTrackMap.json")
+    #map.simplifyTrack(10)
+    #map.save("simpleTrackMap.json")
     
 def drawTrack(screen, trackPoints):
+    if(len(trackPoints) == 0):
+        return
+     
     lastPoint = 0
     for point in trackPoints:
         if (lastPoint != 0):

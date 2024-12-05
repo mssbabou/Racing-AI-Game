@@ -1,6 +1,7 @@
 import json
 import pygame as pg
 
+import Ray
 import Utils
 
 class Map:
@@ -8,6 +9,8 @@ class Map:
         self.trackPoints = []
         self.leftWallPoints = []
         self.rightWallPoints = []
+
+        self.collisionLines = []
     
     def save(self, filePath):
         with open(filePath, "w") as file:
@@ -85,3 +88,14 @@ class Map:
 
             self.leftWallPoints.append(leftPoint)
             self.rightWallPoints.append(rightPoint)
+    
+    def generateCollisionLines(self):
+        self.collisionLines.clear()
+
+        self.collisionLines.append(Ray.Line(self.leftWallPoints[-1], self.leftWallPoints[0]))
+        for i in range(len(self.leftWallPoints)-1):
+            self.collisionLines.append(Ray.Line(self.leftWallPoints[i], self.leftWallPoints[i+1]))
+        
+        self.collisionLines.append(Ray.Line(self.rightWallPoints[-1], self.rightWallPoints[0]))
+        for i in range(len(self.rightWallPoints)-1):
+            self.collisionLines.append(Ray.Line(self.rightWallPoints[i], self.rightWallPoints[i+1]))
