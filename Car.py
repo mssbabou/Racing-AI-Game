@@ -80,6 +80,15 @@ class Car:
             ray.cast(scene)
             self.Rays.append(ray)
     
+    def getRayDistances(self):
+        rayDistances = []
+        for ray in self.Rays:
+            rayDistances.append(ray.distance_normalized)
+        return rayDistances
+    
+    def getSpeedNormalized(self):
+        return self.currentSpeed / self.MaxSpeed
+
     def get_state(self):
         # Normalize ray distances
         ray_distances = [ray.distance_normalized or 1.0 for ray in self.Rays]

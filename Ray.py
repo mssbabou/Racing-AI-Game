@@ -13,7 +13,7 @@ class Ray:
 
         self.hit_point = None
         self.distance = None
-        self.distance_normalized = None
+        self.distance_normalized = 0
 
     def cast(self, scene):
         closest_point = None
@@ -34,7 +34,7 @@ class Ray:
             self.distance_normalized = min_distance / self.length
         else:
             self.distance = None
-            self.distance_normalized = None
+            self.distance_normalized = 1
 
         return closest_point
 
