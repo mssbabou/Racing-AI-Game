@@ -47,8 +47,6 @@ def main():
         playerCar.steer(arrowKeyInput.x)
         playerCar.drive(arrowKeyInput.y)
 
-        print(playerCar.position)
-
         # Draw everything
         screen.fill("white")
         screen.blit(playerCar.transformedImageAsset, playerCar.transformedImageRect.topleft)
@@ -57,13 +55,13 @@ def main():
         drawTrack(screen, map.leftWallPoints)
         drawTrack(screen, map.rightWallPoints)
 
-        ray = Ray.Ray(playerCar.position, playerCar.direction, 200)
-        ray.cast(map.collisionLines)
-        ray.draw(screen)
+        playerCar.castRays(map.collisionLines, 180, 6, 300)
+        playerCar.drawRays(screen)
 
         # Refresh display
         pg.display.flip()
         clock.tick(60)  # Limit
+        print(clock.get_fps())
     
     #map.simplifyTrack(10)
     #map.save("simpleTrackMap.json")

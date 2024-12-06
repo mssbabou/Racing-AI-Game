@@ -62,7 +62,7 @@ class Ray:
     def draw(self, screen):
         # Draw the ray
         end_point = self.origin + self.direction * self.length
-        pg.draw.line(screen, (255, 255, 0), self.origin, end_point, 1)
+        pg.draw.line(screen, (60, 60, 60), self.origin, end_point, 1)
 
         # Highlight hit point, if any
         if self.hit_point:
@@ -70,10 +70,10 @@ class Ray:
             pg.draw.line(screen, (0, 255, 0), self.origin, self.hit_point, 2)
 
         # Display distance text
-        font = pg.font.Font(None, 24)
-        if self.hit_point and self.distance is not None:
-            text = font.render(f"Distance: {self.distance:.2f}", True, (0, 0, 0))
-            screen.blit(text, (self.origin.x + 10, self.origin.y - 20))
-        else:
-            text = font.render("No Hit", True, (0, 0, 0))
-            screen.blit(text, (self.origin.x + 10, self.origin.y - 20))
+        #font = pg.font.Font(None, 24)
+        #if self.hit_point and self.distance is not None:
+        #    text = font.render(f"Distance: {self.distance:.2f}", True, (0, 0, 0))
+        #    screen.blit(text, (self.origin.x + 10, self.origin.y - 20))
+        #else:
+        #    text = font.render("No Hit", True, (0, 0, 0))
+        #    screen.blit(text, (self.origin.x + 10, self.origin.y - 20))
