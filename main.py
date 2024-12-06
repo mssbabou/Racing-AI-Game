@@ -90,7 +90,7 @@ def main():
         # Draw everything
         screen.blit(playerCar.transformedImageAsset, playerCar.transformedImageRect.topleft)
 
-        drawTrack(screen, map.trackPoints)
+        #drawTrack(screen, map.trackPoints)
         drawTrack(screen, map.leftWallPoints)
         drawTrack(screen, map.rightWallPoints)
 
